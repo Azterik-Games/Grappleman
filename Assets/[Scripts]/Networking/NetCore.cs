@@ -15,10 +15,13 @@ namespace Azterik_Networking
         [SerializeField] Text highscoreText;
         [SerializeField] Text errorText;
         [SerializeField] Text scoreText;
+        [Header("Dev settings")]
+        [SerializeField] int nameMaxChar = 12;
+        [SerializeField] int nameMinChar = 6;
 
         private void Start()
         {
-            scoreText.text = "Your score: " + GameCore.score;
+            scoreText.text = "Score: " + GameCore.score;
             CallGather();
             VerifiyInput();
         }
@@ -49,20 +52,37 @@ namespace Azterik_Networking
 
         public void VerifiyInput()
         {
-            submitButton.interactable = (nameField.text.Length >= 6 && nameField.text.Length <= 12);
+            submitButton.interactable = (nameField.text.Length >= nameMinChar && nameField.text.Length <= nameMaxChar);
 
             if (nameField.text.Length == 0)
+            {
+                if (!errorText.gameObject.activeInHierarchy)
+                    errorText.gameObject.SetActive(true);
+
                 errorText.text = "Enter a name!";
+            }
+            else if (nameField.text.Length < nameMinChar)
+            {
+                if (!errorText.gameObject.activeInHierarchy)
+                    errorText.gameObject.SetActive(true);
 
-            else if (nameField.text.Length < 6)
-                errorText.text = "Minimum name length is 6!";
+                errorText.text = "Minimum name length is " + nameMinChar + " !";
+            }
 
-            else if (nameField.text.Length > 12)
-                errorText.text = "Maximum name length is 12!";
+            else if (nameField.text.Length > nameMaxChar)
+            {
+                if (!errorText.gameObject.activeInHierarchy)
+                    errorText.gameObject.SetActive(true);
 
+                errorText.text = "Maximum name length is " + nameMaxChar + " !";
+            }
             else
-                errorText.text = "";
+            {
+                if (errorText.gameObject.activeInHierarchy)
+                    errorText.gameObject.SetActive(false);
 
+                errorText.text = "";
+            }
         }
 
         public void CallGather()
@@ -74,7 +94,6 @@ namespace Azterik_Networking
         {
             WWW request = new WWW("http://localhost/ext_connect_sql/gatherscores.php");
             yield return request;
-            Debug.Log(request.text);
             highscoreText.text = request.text;
         }
     }
