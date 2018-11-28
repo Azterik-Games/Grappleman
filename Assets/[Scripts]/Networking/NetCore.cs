@@ -21,7 +21,7 @@ namespace Azterik_Networking
 
         private void Start()
         {
-            scoreText.text = "Score: " + GameCore.score;
+            scoreText.text = GameCore.score.ToString();
             CallGather();
             VerifiyInput();
         }
@@ -92,7 +92,7 @@ namespace Azterik_Networking
 
         public IEnumerator GatherHighscores()
         {
-            WWW request = new WWW("http://localhost/ext_connect_sql/gatherscores.php");
+            WWW request = new WWW("http://blueparrotgames.com/ext_connect_sql/gatherscores.php");
             yield return request;
             highscoreText.text = request.text;
         }
